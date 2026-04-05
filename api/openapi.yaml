@@ -1,0 +1,171 @@
+openapi: 3.0.3
+info:
+  title: Gondor Files & Storage API
+  description: Files & Storage microservice for the Gondor platform
+  version: 0.1.0
+servers:
+  - url: http://localhost:8006
+    description: Local development
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy
+  /v1/files/upload:
+    post:
+      summary: Upload a file
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                folder_id:
+                  type: integer
+                description:
+                  type: string
+      responses:
+        "201":
+          description: File uploaded successfully
+  /v1/files:
+    get:
+      summary: List files
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: folder_id
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Paginated list of files
+  /v1/files/{id}:
+    get:
+      summary: Get file metadata
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: File metadata
+    delete:
+      summary: Delete a file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: File deleted
+  /v1/files/{id}/download:
+    get:
+      summary: Download a file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: File binary stream
+  /v1/files/folders:
+    get:
+      summary: List folders
+      parameters:
+        - name: company_id
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: parent_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of folders
+    post:
+      summary: Create a folder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, company_id]
+              properties:
+                name:
+                  type: string
+                parent_id:
+                  type: integer
+                company_id:
+                  type: integer
+      responses:
+        "201":
+          description: Folder created
+  /v1/files/folders/{id}:
+    get:
+      summary: Get folder details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Folder details
+    put:
+      summary: Update a folder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                parent_id:
+                  type: integer
+      responses:
+        "200":
+          description: Folder updated
+    delete:
+      summary: Delete a folder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Folder deleted
